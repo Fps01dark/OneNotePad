@@ -6,17 +6,19 @@
 #include <functional>
 #include <memory>
 
+#include "message.h"
+
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void()> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void()> handler)
 {
-	m_voidVoidsubscribers[messageType].push_back(handler);
+	m_voidVoidsubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType)
+void MessageBus::Publish(const Message& message_type)
 {
 	// 查找该类型的订阅者，并触发他们的回调
-	if (m_voidVoidsubscribers.find(messageType) != m_voidVoidsubscribers.end())
+	if (m_voidVoidsubscribers.find(message_type) != m_voidVoidsubscribers.end())
 	{
-		for (auto& handler : m_voidVoidsubscribers[messageType])
+		for (auto& handler : m_voidVoidsubscribers[message_type])
 		{
 			handler();  // 执行订阅者的回调
 		}
@@ -24,15 +26,15 @@ void MessageBus::Publish(const QString& messageType)
 }
 
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void(int)> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void(int)> handler)
 {
-	m_voidIntsubscribers[messageType].push_back(handler);
+	m_voidIntsubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType, const int& data)
+void MessageBus::Publish(const Message& message_type, const int& data)
 {
-	if (m_voidIntsubscribers.find(messageType) != m_voidIntsubscribers.end())
+	if (m_voidIntsubscribers.find(message_type) != m_voidIntsubscribers.end())
 	{
-		for (auto& handler : m_voidIntsubscribers[messageType])
+		for (auto& handler : m_voidIntsubscribers[message_type])
 		{
 			handler(data);  // 执行订阅者的回调
 		}
@@ -40,15 +42,15 @@ void MessageBus::Publish(const QString& messageType, const int& data)
 }
 
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void(int, int)> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void(int, int)> handler)
 {
-	m_voidIntIntsubscribers[messageType].push_back(handler);
+	m_voidIntIntsubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType, const int& data1, const int& data2)
+void MessageBus::Publish(const Message& message_type, const int& data1, const int& data2)
 {
-	if (m_voidIntIntsubscribers.find(messageType) != m_voidIntIntsubscribers.end())
+	if (m_voidIntIntsubscribers.find(message_type) != m_voidIntIntsubscribers.end())
 	{
-		for (auto& handler : m_voidIntIntsubscribers[messageType])
+		for (auto& handler : m_voidIntIntsubscribers[message_type])
 		{
 			handler(data1, data2);  // 执行订阅者的回调
 		}
@@ -56,15 +58,15 @@ void MessageBus::Publish(const QString& messageType, const int& data1, const int
 }
 
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void(const QString&)> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void(const QString&)> handler)
 {
-	m_voidQStringSubscribers[messageType].push_back(handler);
+	m_voidQStringSubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType, const QString& data)
+void MessageBus::Publish(const Message& message_type, const QString& data)
 {
-	if (m_voidQStringSubscribers.find(messageType) != m_voidQStringSubscribers.end())
+	if (m_voidQStringSubscribers.find(message_type) != m_voidQStringSubscribers.end())
 	{
-		for (auto& handler : m_voidQStringSubscribers[messageType])
+		for (auto& handler : m_voidQStringSubscribers[message_type])
 		{
 			handler(data);  // 执行订阅者的回调
 		}
@@ -72,15 +74,15 @@ void MessageBus::Publish(const QString& messageType, const QString& data)
 }
 
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void(const QStringList&)> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void(const QStringList&)> handler)
 {
-	m_voidQStringListSubscribers[messageType].push_back(handler);
+	m_voidQStringListSubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType, const QStringList& data)
+void MessageBus::Publish(const Message& message_type, const QStringList& data)
 {
-	if (m_voidQStringListSubscribers.find(messageType) != m_voidQStringListSubscribers.end())
+	if (m_voidQStringListSubscribers.find(message_type) != m_voidQStringListSubscribers.end())
 	{
-		for (auto& handler : m_voidQStringListSubscribers[messageType])
+		for (auto& handler : m_voidQStringListSubscribers[message_type])
 		{
 			handler(data);  // 执行订阅者的回调
 		}
@@ -88,15 +90,15 @@ void MessageBus::Publish(const QString& messageType, const QStringList& data)
 }
 
 // 注册消息类型的订阅者
-void MessageBus::Subscribe(const QString& messageType, std::function<void(OnTextEdit*)> handler)
+void MessageBus::Subscribe(const Message& message_type, std::function<void(OnTextEdit*)> handler)
 {
-	m_voidCustomTextEditSubscribers[messageType].push_back(handler);
+	m_voidCustomTextEditSubscribers[message_type].push_back(handler);
 }
-void MessageBus::Publish(const QString& messageType, OnTextEdit* data)
+void MessageBus::Publish(const Message& message_type, OnTextEdit* data)
 {
-	if (m_voidCustomTextEditSubscribers.find(messageType) != m_voidCustomTextEditSubscribers.end())
+	if (m_voidCustomTextEditSubscribers.find(message_type) != m_voidCustomTextEditSubscribers.end())
 	{
-		for (auto& handler : m_voidCustomTextEditSubscribers[messageType])
+		for (auto& handler : m_voidCustomTextEditSubscribers[message_type])
 		{
 			handler(data);  // 执行订阅者的回调
 		}

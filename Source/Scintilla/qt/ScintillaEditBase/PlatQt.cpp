@@ -33,7 +33,6 @@
 #include <QAction>
 #include <QTime>
 #include <QMessageBox>
-#include <QTextCodec>
 #include <QListWidget>
 #include <QVarLengthArray>
 #include <QScrollBar>

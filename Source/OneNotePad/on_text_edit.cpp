@@ -3,6 +3,7 @@
 #include <QWheelEvent>
 
 #include "message_bus.h"
+#include "message.h"
 
 namespace
 {
@@ -111,11 +112,11 @@ void OnTextEdit::wheelEvent(QWheelEvent* event)
 		int   current_size = font.pointSize();
 		if (delta > 0)
 		{
-			m_messageBus->Publish("Change Zoom", current_size + 1);
+			m_messageBus->Publish(Message::ChangeZoom, current_size + 1);
 		}
 		else
 		{
-			m_messageBus->Publish("Change Zoom", current_size - 1);
+			m_messageBus->Publish(Message::ChangeZoom, current_size - 1);
 		}
 	}
 	else {

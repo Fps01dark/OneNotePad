@@ -5,8 +5,9 @@
 #include <QVBoxLayout>
 #include <QFileSystemModel>
 
-#include "dir_workspace_tree_view.h"
 #include "message_bus.h"
+#include "message.h"
+#include "dir_workspace_tree_view.h"
 
 DirWorkspaceDock::DirWorkspaceDock(std::shared_ptr<MessageBus> message_bus, QWidget* parent)
 	: m_messageBus(message_bus), QDockWidget(parent)
@@ -19,7 +20,7 @@ DirWorkspaceDock::DirWorkspaceDock(std::shared_ptr<MessageBus> message_bus, QWid
 	InitConnect();
 }
 
-DirWorkspaceDock::~DirWorkspaceDock() 
+DirWorkspaceDock::~DirWorkspaceDock()
 {
 }
 
@@ -29,9 +30,9 @@ void DirWorkspaceDock::SetRootDir(const QString& root_dir)
 	m_treeView->setRootIndex(m_fileSystemModel->index(root_dir));
 }
 
-QString DirWorkspaceDock::GetRootDir() const 
-{ 
-	return m_fileSystemModel->rootPath(); 
+QString DirWorkspaceDock::GetRootDir() const
+{
+	return m_fileSystemModel->rootPath();
 }
 
 void DirWorkspaceDock::InitUi()
@@ -54,6 +55,6 @@ void DirWorkspaceDock::InitConnect()
 {
 	connect(m_treeView, &QTreeView::doubleClicked, this, [this](const QModelIndex& index)
 		{
-			m_messageBus->Publish("Open File", m_fileSystemModel->filePath(index));
+			m_messageBus->Publish(Message::OpenFile, m_fileSystemModel->filePath(index));
 		});
 }

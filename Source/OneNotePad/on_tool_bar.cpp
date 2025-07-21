@@ -1,6 +1,7 @@
 ﻿#include "on_tool_bar.h"
 
 #include "message_bus.h"
+#include "message.h"
 
 OnToolBar::OnToolBar(std::shared_ptr<MessageBus> message_bus, QWidget* parent)
 	: m_messageBus(message_bus), QToolBar(parent) {
@@ -53,26 +54,26 @@ void OnToolBar::InitConnect()
 {
 	connect(m_newAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("New File");
+			m_messageBus->Publish(Message::NewFile);
 		});
 	connect(m_openAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Open File");
+			m_messageBus->Publish(Message::OpenFile);
 		});
 	connect(m_saveAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Save File");
+			m_messageBus->Publish(Message::SaveFile);
 		});
 	connect(m_saveAllAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Save All File");
+			m_messageBus->Publish(Message::SaveAllFile);
 		});
 	connect(m_closeAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close File");
+			m_messageBus->Publish(Message::CloseFile);
 		});
 	connect(m_closeAllAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close All File");
+			m_messageBus->Publish(Message::CloseAllFile);
 		});
 }

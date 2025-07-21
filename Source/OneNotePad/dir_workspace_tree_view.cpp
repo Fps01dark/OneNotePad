@@ -6,6 +6,7 @@
 #include <QContextMenuEvent>
 
 #include "message_bus.h"
+#include "message.h"
 
 DirWorkspaceTreeView::DirWorkspaceTreeView(std::shared_ptr<MessageBus> message_bus, QFileSystemModel* model, QWidget* parent)
 	: m_messageBus(message_bus), m_fileSystemModel(model), QTreeView(parent)
@@ -51,28 +52,34 @@ void DirWorkspaceTreeView::InitUi()
 	m_cmdHereAction = m_itemMenu->addAction(tr("Cmd Here"));
 }
 
-void DirWorkspaceTreeView::InitValue() {}
+void DirWorkspaceTreeView::InitValue()
+{
+}
 
-void DirWorkspaceTreeView::InitConnect() {
-	connect(m_openAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Open File", m_fileSystemModel->filePath(currentIndex()));
+void DirWorkspaceTreeView::InitConnect()
+{
+	connect(m_openAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::OpenFile, m_fileSystemModel->filePath(currentIndex()));
 		});
-	connect(m_copyPathAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Copy Path", m_fileSystemModel->filePath(currentIndex()));
+	connect(m_copyPathAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::CopyPath, m_fileSystemModel->filePath(currentIndex()));
 		});
-	connect(m_copyNameAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Copy Name", m_fileSystemModel->fileName(currentIndex()));
+	connect(m_copyNameAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::CopyName, m_fileSystemModel->fileName(currentIndex()));
 		});
-	connect(m_runBySystemAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Open In Default Viewer",
-			m_fileSystemModel->filePath(currentIndex()));
+	connect(m_runBySystemAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::OpenInDefaultViewer, m_fileSystemModel->filePath(currentIndex()));
 		});
-	connect(m_explorerHereAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Open Explorer",
-			m_fileSystemModel->fileInfo(currentIndex()).absolutePath());
+	connect(m_explorerHereAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::OpenExplorer, m_fileSystemModel->fileInfo(currentIndex()).absolutePath());
 		});
-	connect(m_cmdHereAction, &QAction::triggered, [this]() {
-		m_messageBus->Publish("Open Cmd",
-			m_fileSystemModel->fileInfo(currentIndex()).absolutePath());
+	connect(m_cmdHereAction, &QAction::triggered, [this]()
+		{
+			m_messageBus->Publish(Message::OpenCmd, m_fileSystemModel->fileInfo(currentIndex()).absolutePath());
 		});
 }

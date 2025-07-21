@@ -4,6 +4,7 @@
 #include <QContextMenuEvent>
 
 #include "message_bus.h"
+#include "message.h"
 
 OnTabBar::OnTabBar(std::shared_ptr<MessageBus> message_bus, QWidget* parent)
 	: m_messageBus(message_bus), QTabBar(parent)
@@ -82,70 +83,70 @@ void OnTabBar::InitConnect()
 {
 	connect(m_closeAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close File");
+			m_messageBus->Publish(Message::CloseFile);
 		});
 	connect(m_closeAllButCurrentAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close All But Current File");
+			m_messageBus->Publish(Message::CloseAllButCurrentFile);
 		});
 	connect(m_closeLeftAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close Left File");
+			m_messageBus->Publish(Message::CloseLeftFile);
 		});
 	connect(m_closeRightAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close Right File");
+			m_messageBus->Publish(Message::CloseRightFile);
 		});
 	connect(m_closeAllUnchangeAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Close All Unchanged File");
+			m_messageBus->Publish(Message::CloseAllUnchangedFile);
 		});
 	connect(m_saveAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Save File");
+			m_messageBus->Publish(Message::SaveFile);
 		});
 	connect(m_saveAsAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Save As File");
+			m_messageBus->Publish(Message::SaveAsFile);
 		});
 	connect(m_explorerAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Open Explorer");
+			m_messageBus->Publish(Message::OpenExplorer);
 		});
 	connect(m_cmdAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Open Cmd");
+			m_messageBus->Publish(Message::OpenCmd);
 		});
 	connect(m_folderAsWorkspace, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Open Directory Workspace");
+			m_messageBus->Publish(Message::OpenDirectoryWorkspace);
 		});
 	connect(m_defaultViewerAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Open In Default Viewer");
+			m_messageBus->Publish(Message::OpenInDefaultViewer);
 		});
 	connect(m_renameAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Save As File");
+			m_messageBus->Publish(Message::SaveAsFile);
 		});
 	connect(m_deleteAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Delete File");
+			m_messageBus->Publish(Message::DeleteFile);
 		});
 	connect(m_reloadAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Reload File");
+			m_messageBus->Publish(Message::ReloadFile);
 		});
 	connect(m_copyPathAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Copy Path");
+			m_messageBus->Publish(Message::CopyPath);
 		});
 	connect(m_copyNameAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Copy Name");
+			m_messageBus->Publish(Message::CopyName);
 		});
 	connect(m_copyDirAction, &QAction::triggered, [this]()
 		{
-			m_messageBus->Publish("Copy Directory");
+			m_messageBus->Publish(Message::CopyDirectory);
 		});
 }

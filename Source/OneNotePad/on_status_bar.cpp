@@ -1,6 +1,7 @@
 ﻿#include "on_status_bar.h"
 
 #include "message_bus.h"
+#include "message.h"
 #include "on_text_edit.h"
 #include "status_label.h"
 
@@ -43,25 +44,25 @@ void OnStatusBar::InitUi()
 
 void OnStatusBar::InitValue()
 {
-	m_messageBus->Subscribe("Update Status Bar", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateStatusBar, [this](OnTextEdit* editor)
 		{
 			qDebug() << "This file is " << __FILE__ << " on line " << __LINE__;
 			qDebug(Q_FUNC_INFO);
 
-			m_messageBus->Publish("Update Language", editor);
-			m_messageBus->Publish("Update Document Size", editor);
-			m_messageBus->Publish("Update Selection Info", editor);
-			m_messageBus->Publish("Update Eol", editor);
-			m_messageBus->Publish("Update Encoding", editor);
-			m_messageBus->Publish("Update OverType", editor);
+			m_messageBus->Publish(Message::UpdateLanguage, editor);
+			m_messageBus->Publish(Message::UpdateDocumentSize, editor);
+			m_messageBus->Publish(Message::UpdateSelectionInfo, editor);
+			m_messageBus->Publish(Message::UpdateEol, editor);
+			m_messageBus->Publish(Message::UpdateEncoding, editor);
+			m_messageBus->Publish(Message::UpdateOverType, editor);
 		});
 
-	m_messageBus->Subscribe("Update Language", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateLanguage, [this](OnTextEdit* editor)
 		{
 			// TODO:暂时语言只有None
 			m_docType->setText("Normal Text File");
 		});
-	m_messageBus->Subscribe("Update Document Size", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateDocumentSize, [this](OnTextEdit* editor)
 		{
 			qDebug() << "This file is " << __FILE__ << " on line " << __LINE__;
 			qDebug(Q_FUNC_INFO);
@@ -69,7 +70,7 @@ void OnStatusBar::InitValue()
 			QString size_text = tr("Length: %L1    Lines: %L2").arg(editor->length()).arg(editor->lineCount());
 			m_docSize->setText(size_text);
 		});
-	m_messageBus->Subscribe("Update Selection Info", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateSelectionInfo, [this](OnTextEdit* editor)
 		{
 			qDebug() << "This file is " << __FILE__ << " on line " << __LINE__;
 			qDebug(Q_FUNC_INFO);
@@ -106,7 +107,7 @@ void OnStatusBar::InitValue()
 			QString position_text = tr("Ln: %L1    Col: %L2    ").arg(editor->lineFromPosition(pos) + 1).arg(editor->column(pos) + 1);
 			m_docPos->setText(position_text + selection_text);
 		});
-	m_messageBus->Subscribe("Update Eol", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateEol, [this](OnTextEdit* editor)
 		{
 			qDebug() << "This file is " << __FILE__ << " on line " << __LINE__;
 			qDebug(Q_FUNC_INFO);
@@ -124,7 +125,7 @@ void OnStatusBar::InitValue()
 				break;
 			}
 		});
-	m_messageBus->Subscribe("Update Encoding", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateEncoding, [this](OnTextEdit* editor)
 		{
 			switch (editor->codePage())
 			{
@@ -139,7 +140,7 @@ void OnStatusBar::InitValue()
 				break;
 			}
 		});
-	m_messageBus->Subscribe("Update OverType", [this](OnTextEdit* editor)
+	m_messageBus->Subscribe(Message::UpdateOverType, [this](OnTextEdit* editor)
 		{
 			bool overtype = editor->overtype();
 			if (overtype)

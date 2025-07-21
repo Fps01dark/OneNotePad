@@ -25,6 +25,7 @@
 #include "on_main_window.h"
 #include "message_bus.h"
 #include "on_status_bar.h"
+#include "message.h"
 
 using tinyxml2::XMLDocument;
 using tinyxml2::XMLNode;
@@ -61,7 +62,7 @@ OnCore::~OnCore()
 
 void OnCore::ExitSoftware()
 {
-	m_messageBus->Publish("Exit Software");
+	m_messageBus->Publish(Message::ExitSoftware);
 }
 
 void OnCore::InitUi()
@@ -106,7 +107,7 @@ void OnCore::InitUi()
 void OnCore::InitValue()
 {
 	// File
-	m_messageBus->Subscribe("New File", [this]()
+	m_messageBus->Subscribe(Message::NewFile, [this]()
 		{
 			static int count = 0;
 			while (true)
@@ -128,7 +129,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Open File", [this]()
+	m_messageBus->Subscribe(Message::OpenFile, [this]()
 		{
 			QStringList&& file_paths = QFileDialog::getOpenFileNames(m_mainWindow, tr("Open"), "", "All types(*.*)");
 			for (const QString& file_path : file_paths)
@@ -136,11 +137,11 @@ void OnCore::InitValue()
 				OpenFile(file_path);
 			}
 		});
-	m_messageBus->Subscribe("Open File", [this](const QString& data)
+	m_messageBus->Subscribe(Message::OpenFile, [this](const QString& data)
 		{
 			OpenFile(data);
 		});
-	m_messageBus->Subscribe("Open Explorer", [this]()
+	m_messageBus->Subscribe(Message::OpenExplorer, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -150,11 +151,11 @@ void OnCore::InitValue()
 				QDesktopServices::openUrl(QUrl::fromLocalFile(file_info.absolutePath()));
 			}
 		});
-	m_messageBus->Subscribe("Open Explorer", [this](const QString& data)
+	m_messageBus->Subscribe(Message::OpenExplorer, [this](const QString& data)
 		{
 			QDesktopServices::openUrl(QUrl::fromLocalFile(data));
 		});
-	m_messageBus->Subscribe("Open Cmd", [this]()
+	m_messageBus->Subscribe(Message::OpenCmd, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -166,12 +167,12 @@ void OnCore::InitValue()
 				QProcess::startDetached("cmd.exe", QStringList() << "/K" << "cd" << file_dir);
 			}
 		});
-	m_messageBus->Subscribe("Open Cmd", [this](const QString& data)
+	m_messageBus->Subscribe(Message::OpenCmd, [this](const QString& data)
 		{
 			// 启动命令行窗口并进入文件所在目录
 			QProcess::startDetached("cmd.exe", QStringList() << "/K" << "cd" << data);
 		});
-	m_messageBus->Subscribe("Open Directory Workspace", [this]()
+	m_messageBus->Subscribe(Message::OpenDirectoryWorkspace, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -185,7 +186,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Open Directory As Workspace", [this]()
+	m_messageBus->Subscribe(Message::OpenDirectoryAsWorkspace, [this]()
 		{
 			QString file_dir = QFileDialog::getExistingDirectory(m_mainWindow, tr("Open Directory As Workspace"), qApp->applicationDirPath());
 			if (!file_dir.isEmpty()) {
@@ -193,7 +194,7 @@ void OnCore::InitValue()
 				m_dirWorkSpace->show();
 			}
 		});
-	m_messageBus->Subscribe("Open In Default Viewer", [this]()
+	m_messageBus->Subscribe(Message::OpenInDefaultViewer, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -202,11 +203,11 @@ void OnCore::InitValue()
 				QDesktopServices::openUrl(QUrl::fromLocalFile(file_path));
 			}
 		});
-	m_messageBus->Subscribe("Open In Default Viewer", [this](const QString& data)
+	m_messageBus->Subscribe(Message::OpenInDefaultViewer, [this](const QString& data)
 		{
 			QDesktopServices::openUrl(QUrl::fromLocalFile(data));
 		});
-	m_messageBus->Subscribe("Reload File", [this]()
+	m_messageBus->Subscribe(Message::ReloadFile, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -229,7 +230,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Save File", [this]()
+	m_messageBus->Subscribe(Message::SaveFile, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -252,7 +253,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Save As File", [this]()
+	m_messageBus->Subscribe(Message::SaveAsFile, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -266,7 +267,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Save All File", [this]()
+	m_messageBus->Subscribe(Message::SaveAllFile, [this]()
 		{
 			for (int index = 0; index < m_centralWidget->count(); ++index)
 			{
@@ -288,7 +289,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Save As Clipboard", [this]()
+	m_messageBus->Subscribe(Message::SaveAsClipboard, [this]()
 		{
 			QClipboard* clipboard = QApplication::clipboard();
 			QString     file_path = QFileDialog::getSaveFileName(m_mainWindow, tr("Save A Copy As..."),
@@ -307,7 +308,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close File", [this]()
+	m_messageBus->Subscribe(Message::CloseFile, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -352,7 +353,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close File", [this](int index)
+	m_messageBus->Subscribe(Message::CloseFile, [this](int index)
 		{
 			if (index >= 0 && index < m_centralWidget->count())
 			{
@@ -395,7 +396,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close All File", [this]()
+	m_messageBus->Subscribe(Message::CloseAllFile, [this]()
 		{
 			for (int index = m_centralWidget->count() - 1; index >= 0; --index)
 			{
@@ -436,7 +437,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close All But Current File", [this]()
+	m_messageBus->Subscribe(Message::CloseAllButCurrentFile, [this]()
 		{
 			for (int index = m_centralWidget->count() - 1; index >= 0; --index)
 			{
@@ -482,7 +483,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close Left File", [this]()
+	m_messageBus->Subscribe(Message::CloseLeftFile, [this]()
 		{
 			int current_index = m_centralWidget->currentIndex();
 			for (int index = current_index - 1; index >= 0; --index)
@@ -523,7 +524,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close Right File", [this]()
+	m_messageBus->Subscribe(Message::CloseRightFile, [this]()
 		{
 			int current_index = m_centralWidget->currentIndex();
 			for (int index = m_centralWidget->count() - 1; index >= current_index + 1; --index)
@@ -569,7 +570,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Close All Unchanged File", [this]()
+	m_messageBus->Subscribe(Message::CloseAllUnchangedFile, [this]()
 		{
 			for (int index = m_centralWidget->count() - 1; index >= 0; --index)
 			{
@@ -579,7 +580,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Delete File", [this]()
+	m_messageBus->Subscribe(Message::DeleteFile, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -599,7 +600,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Load Session", [this]()
+	m_messageBus->Subscribe(Message::LoadSession, [this]()
 		{
 			// 选择文件
 			QString&& file_path = QFileDialog::getOpenFileName(m_mainWindow, tr("Open Session"), "", "All types(*.*)");
@@ -624,7 +625,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Save Session", [this]()
+	m_messageBus->Subscribe(Message::SaveSession, [this]()
 		{
 			// 收集文件路径
 			QStringList file_paths;
@@ -651,7 +652,7 @@ void OnCore::InitValue()
 			}
 			doc.SaveFile(save_path.toLocal8Bit().constData());
 		});
-	m_messageBus->Subscribe("Print", [this]()
+	m_messageBus->Subscribe(Message::Print, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -680,16 +681,16 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Clear Recent Record", [this]()
+	m_messageBus->Subscribe(Message::ClearRecentRecord, [this]()
 		{
 			m_menuBar->SetRecentFiles(QStringList());
 		});
-	m_messageBus->Subscribe("Exit Software", [this]()
+	m_messageBus->Subscribe(Message::ExitSoftware, [this]()
 		{
 			m_mainWindow->close();
 		});
 	// Edit
-	m_messageBus->Subscribe("Undo", [this]()
+	m_messageBus->Subscribe(Message::Undo, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -697,7 +698,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->undo();
 			}
 		});
-	m_messageBus->Subscribe("Redo", [this]()
+	m_messageBus->Subscribe(Message::Redo, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -705,7 +706,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->redo();
 			}
 		});
-	m_messageBus->Subscribe("Cut", [this]()
+	m_messageBus->Subscribe(Message::Redo, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -713,7 +714,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->cut();
 			}
 		});
-	m_messageBus->Subscribe("Copy", [this]()
+	m_messageBus->Subscribe(Message::Copy, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -721,7 +722,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->copyAllowLine();
 			}
 		});
-	m_messageBus->Subscribe("Paste", [this]()
+	m_messageBus->Subscribe(Message::Paste, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -729,7 +730,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->paste();
 			}
 		});
-	m_messageBus->Subscribe("Delete", [this]()
+	m_messageBus->Subscribe(Message::Delete, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -737,7 +738,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->clear();
 			}
 		});
-	m_messageBus->Subscribe("Select All", [this]()
+	m_messageBus->Subscribe(Message::SelectAll, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -745,7 +746,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->selectAll();
 			}
 		});
-	m_messageBus->Subscribe("Begin/End Select", [this](int start)
+	m_messageBus->Subscribe(Message::BeginEndSelect, [this](int start)
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -765,7 +766,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Begin/End Select in Column Mode", [this](int start)
+	m_messageBus->Subscribe(Message::BeginEndSelectInColumnMode, [this](int start)
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -786,7 +787,7 @@ void OnCore::InitValue()
 				}
 			}
 		});
-	m_messageBus->Subscribe("Insert Short Time", [this]()
+	m_messageBus->Subscribe(Message::InsertShortTime, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -797,7 +798,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->addText(date_string.toUtf8().length(), date_string.toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("Insert Long Time", [this]()
+	m_messageBus->Subscribe(Message::InsertLongTime, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -808,7 +809,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->addText(date_string.toUtf8().length(), date_string.toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("Insert Custom Time", [this]()
+	m_messageBus->Subscribe(Message::InsertCustomTime, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -819,7 +820,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->addText(date_string.toUtf8().length(), date_string.toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("Copy All Names", [this]()
+	m_messageBus->Subscribe(Message::CopyAllNames, [this]()
 		{
 			QClipboard* clipboard = QApplication::clipboard();
 			QString all_names;
@@ -829,7 +830,7 @@ void OnCore::InitValue()
 			}
 			clipboard->setText(all_names);
 		});
-	m_messageBus->Subscribe("Copy All Paths", [this]()
+	m_messageBus->Subscribe(Message::CopyAllPaths, [this]()
 		{
 			QClipboard* clipboard = QApplication::clipboard();
 			QString all_paths;
@@ -839,7 +840,7 @@ void OnCore::InitValue()
 			}
 			clipboard->setText(all_paths);
 		});
-	m_messageBus->Subscribe("Increase Line Indent", [this]()
+	m_messageBus->Subscribe(Message::IncreaseLineIndent, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -847,7 +848,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->tab();
 			}
 		});
-	m_messageBus->Subscribe("Decrease Line Indent", [this]()
+	m_messageBus->Subscribe(Message::DecreaseLineIndent, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -855,7 +856,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->backTab();
 			}
 		});
-	m_messageBus->Subscribe("UPPERCASE", [this]()
+	m_messageBus->Subscribe(Message::Uppercase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -863,7 +864,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->upperCase();
 			}
 		});
-	m_messageBus->Subscribe("lowercase", [this]()
+	m_messageBus->Subscribe(Message::Lowercase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -871,7 +872,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->lowerCase();
 			}
 		});
-	m_messageBus->Subscribe("Proper Case", [this]()
+	m_messageBus->Subscribe(Message::ProperCase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -906,7 +907,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("Proper Case(blend)", [this]()
+	m_messageBus->Subscribe(Message::ProperCaseBlend, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -933,7 +934,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("Sentence case", [this]()
+	m_messageBus->Subscribe(Message::SentenceCase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1009,7 +1010,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("Sentence case(blend)", [this]()
+	m_messageBus->Subscribe(Message::SentenceCaseBlend, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1081,7 +1082,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("iNVERT cASE", [this]()
+	m_messageBus->Subscribe(Message::InsertCase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1109,7 +1110,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("ranDOm CasE", [this]()
+	m_messageBus->Subscribe(Message::RandomCase, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1140,7 +1141,7 @@ void OnCore::InitValue()
 				editor->setSel(start_pos, end_pos);
 			}
 		});
-	m_messageBus->Subscribe("Duplicate Current Line", [this]()
+	m_messageBus->Subscribe(Message::DuplicateCurrentLine, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1148,7 +1149,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->lineDuplicate();
 			}
 		});
-	m_messageBus->Subscribe("Remove Duplicate Line", [this]()
+	m_messageBus->Subscribe(Message::RemoveDuplicateLine, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1156,7 +1157,7 @@ void OnCore::InitValue()
 				// TODO:通过搜索功能删除重复行
 			}
 		});
-	m_messageBus->Subscribe("Remove Consecutive Duplicate Lines", [this]()
+	m_messageBus->Subscribe(Message::RemoveConsecutiveDuplicateLines, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1164,7 +1165,7 @@ void OnCore::InitValue()
 				// TODO:通过搜索功能删除重复行
 			}
 		});
-	m_messageBus->Subscribe("Split Lines", [this]()
+	m_messageBus->Subscribe(Message::SplitLines, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1173,7 +1174,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->linesSplit(0);
 			}
 		});
-	m_messageBus->Subscribe("Join Lines", [this]()
+	m_messageBus->Subscribe(Message::JoinLines, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1182,7 +1183,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->linesJoin();
 			}
 		});
-	m_messageBus->Subscribe("Move Up Current Line", [this]()
+	m_messageBus->Subscribe(Message::MoveUpCurrentLine, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1190,7 +1191,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->moveSelectedLinesUp();
 			}
 		});
-	m_messageBus->Subscribe("Move Down Current Line", [this]()
+	m_messageBus->Subscribe(Message::MoveDownCurrentLine, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1198,7 +1199,7 @@ void OnCore::InitValue()
 				m_textWidget[index]->moveSelectedLinesDown();
 			}
 		});
-	m_messageBus->Subscribe("Remove Empty Lines", [this]()
+	m_messageBus->Subscribe(Message::RemoveEmptyLines, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1206,7 +1207,7 @@ void OnCore::InitValue()
 				// TODO:通过搜索功能删除空行
 			}
 		});
-	m_messageBus->Subscribe("Remove Empty Lines Blank", [this]()
+	m_messageBus->Subscribe(Message::RemoveEmptyLinesBlank, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1214,7 +1215,7 @@ void OnCore::InitValue()
 				// TODO:通过搜索功能删除空行
 			}
 		});
-	m_messageBus->Subscribe("Insert Blank Line Above Current", [this]()
+	m_messageBus->Subscribe(Message::InsertBlankLineAboveCurrent, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1228,7 +1229,7 @@ void OnCore::InitValue()
 				text_edit->insertText(pos, "\r\n");
 			}
 		});
-	m_messageBus->Subscribe("Insert Blank Line Below Current", [this]()
+	m_messageBus->Subscribe(Message::InsertBlankLineBelowCurrent, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1242,7 +1243,7 @@ void OnCore::InitValue()
 				text_edit->insertText(pos, text_edit->GetEOLString().toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("Reverse Line Order", [this]()
+	m_messageBus->Subscribe(Message::ReverseLineOrder, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1317,7 +1318,7 @@ void OnCore::InitValue()
 				editor->replaceTarget(-1, joined_text.toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("Randomize Line Order", [this]()
+	m_messageBus->Subscribe(Message::RandomizeLineOrder, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1393,7 +1394,7 @@ void OnCore::InitValue()
 				editor->replaceTarget(-1, joined_text.toUtf8().constData());
 			}
 		});
-	m_messageBus->Subscribe("EOL Conversion", [this](int eolMode)
+	m_messageBus->Subscribe(Message::EolConversion, [this](int eolMode)
 		{
 			qDebug() << "This file is " << __FILE__ << " on line " << __LINE__;
 			qDebug(Q_FUNC_INFO);
@@ -1407,20 +1408,34 @@ void OnCore::InitValue()
 			}
 		});
 
+	// Help
+	m_messageBus->Subscribe(Message::AboutOneNotePad, [this]()
+		{
+			QMessageBox::about(m_mainWindow, tr("About OneNotePad"),
+				QStringLiteral("<h3>%1 v%2 </h3>"
+					"<p>%4</p>"
+					"<p><a href=\"https://github.com/Fps01dark/OneNotePad\">OneNotePad Home Page</a></p>"
+					R"(<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p> <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p> <p>You should have received a copy of the GNU General Public License along with this program. If not, see &lt;<a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>)")
+				.arg(QApplication::applicationDisplayName(), APP_VERSION, APP_COPYRIGHT.toHtmlEscaped()));
+		});
+	m_messageBus->Subscribe(Message::DebugInfo, [this]()
+		{
+		});
+
 	// Directory
-	m_messageBus->Subscribe("Copy Path", [this](const QString& data)
+	m_messageBus->Subscribe(Message::CopyPath, [this](const QString& data)
 		{
 			QClipboard* clipboard = QApplication::clipboard();
 			clipboard->setText(data);
 		});
-	m_messageBus->Subscribe("Copy Name", [this](const QString& data)
+	m_messageBus->Subscribe(Message::CopyName, [this](const QString& data)
 		{
 			QClipboard* clipboard = QApplication::clipboard();
 			clipboard->setText(data);
 		});
 
 	// QTabWidget
-	m_messageBus->Subscribe("Text Changed", [this]()
+	m_messageBus->Subscribe(Message::TextChanged, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1429,7 +1444,7 @@ void OnCore::InitValue()
 				m_centralWidget->setTabIcon(index, QIcon(":/Icons/Icons/unsaved.png"));
 			}
 		});
-	m_messageBus->Subscribe("Copy Path", [this]()
+	m_messageBus->Subscribe(Message::CopyPath, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1438,7 +1453,7 @@ void OnCore::InitValue()
 				clipboard->setText(m_textWidget[index]->GetFilePath());
 			}
 		});
-	m_messageBus->Subscribe("Copy Name", [this]()
+	m_messageBus->Subscribe(Message::CopyName, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1447,7 +1462,7 @@ void OnCore::InitValue()
 				clipboard->setText(m_textWidget[index]->GetFileName());
 			}
 		});
-	m_messageBus->Subscribe("Copy Directory", [this]()
+	m_messageBus->Subscribe(Message::CopyDirectory, [this]()
 		{
 			int index = m_centralWidget->currentIndex();
 			if (index >= 0)
@@ -1457,7 +1472,7 @@ void OnCore::InitValue()
 				clipboard->setText(file_info.absolutePath());
 			}
 		});
-	m_messageBus->Subscribe("Change Zoom", [this](int data)
+	m_messageBus->Subscribe(Message::ChangeZoom, [this](int data)
 		{
 			m_fontSize = data;
 			for (int i = 0; i < m_textWidget.size(); ++i)
@@ -1469,7 +1484,7 @@ void OnCore::InitValue()
 		});
 
 	// MainWindow
-	m_messageBus->Subscribe("Exit Software", [this]()
+	m_messageBus->Subscribe(Message::ExitSoftware, [this]()
 		{
 			// 保存主窗口大小
 			QSize main_window_size = m_mainWindow->size();
@@ -1478,20 +1493,6 @@ void OnCore::InitValue()
 			// 保存上次打开文件
 			m_settings->setValue("OnCore/RecentFilePaths", m_menuBar->GetRecentFiles());
 			SaveSettings();
-		});
-
-	// Help
-	m_messageBus->Subscribe("About OneNotePad", [this]()
-		{
-			QMessageBox::about(m_mainWindow, tr("About OneNotePad"),
-				QStringLiteral("<h3>%1 v%2 </h3>"
-					"<p>%4</p>"
-					"<p><a href=\"https://github.com/Fps01dark/OneNotePad\">OneNotePad Home Page</a></p>"
-					R"(<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p> <p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.</p> <p>You should have received a copy of the GNU General Public License along with this program. If not, see &lt;<a href="https://www.gnu.org/licenses/">https://www.gnu.org/licenses/</a>&gt;.</p>)")
-				.arg(QApplication::applicationDisplayName(), APP_VERSION, APP_COPYRIGHT.toHtmlEscaped()));
-		});
-	m_messageBus->Subscribe("Debug Info", [this]()
-		{
 		});
 }
 
@@ -1505,7 +1506,7 @@ void OnCore::InitConnect()
 	{
 		OnTextEdit* editor = m_textWidget[index];
 		UpdateWindowTitle();
-		m_messageBus->Publish("Update Status Bar", editor);
+		m_messageBus->Publish(Message::UpdateStatusBar, editor);
 	}
 	connect(m_centralWidget, &OnTabWidget::currentChanged, [this]()
 		{
@@ -1517,13 +1518,13 @@ void OnCore::InitConnect()
 			{
 				OnTextEdit* editor = m_textWidget[index];
 				UpdateWindowTitle();
-				m_messageBus->Publish("Update Menu Bar", editor);
-				m_messageBus->Publish("Update Status Bar", editor);
+				m_messageBus->Publish(Message::UpdateMenuBar, editor);
+				m_messageBus->Publish(Message::UpdateStatusBar, editor);
 			}
 		});
 	connect(m_centralWidget, &OnTabWidget::tabCloseRequested, [this](int index)
 		{
-			m_messageBus->Publish("Close File", index);
+			m_messageBus->Publish(Message::CloseFile, index);
 		});
 	connect(m_tabBar, &OnTabBar::tabMoved, [this](int from, int to)
 		{
@@ -1563,7 +1564,7 @@ bool OnCore::NewFile(const QString& new_file_name)
 	text_widget->setEOLMode(SC_EOL_CRLF);
 	connect(text_widget, &OnTextEdit::savePointChanged, [this]()
 		{
-			m_messageBus->Publish("Text Changed");
+			m_messageBus->Publish(Message::TextChanged);
 		});
 	connect(text_widget, &OnTextEdit::updateUi, [=](Scintilla::Update updated)
 		{
@@ -1573,11 +1574,11 @@ bool OnCore::NewFile(const QString& new_file_name)
 			OnTextEdit* editor = qobject_cast<OnTextEdit*>(sender());
 			if (Scintilla::FlagSet(updated, Scintilla::Update::Content))
 			{
-				m_messageBus->Publish("Update Document Size", text_widget);
+				m_messageBus->Publish(Message::UpdateDocumentSize, text_widget);
 			}
 			if (Scintilla::FlagSet(updated, Scintilla::Update::Content) || Scintilla::FlagSet(updated, Scintilla::Update::Selection))
 			{
-				m_messageBus->Publish("Update Selection Info", text_widget);
+				m_messageBus->Publish(Message::UpdateSelectionInfo, text_widget);
 			}
 		});
 	m_textWidget.append(text_widget);
@@ -1626,7 +1627,7 @@ bool OnCore::OpenFile(const QString& file_path)
 			text_widget->setEOLMode(SC_EOL_CRLF);
 			connect(text_widget, &OnTextEdit::savePointChanged, [this]()
 				{
-					m_messageBus->Publish("Text Changed");
+					m_messageBus->Publish(Message::TextChanged);
 				});
 			connect(text_widget, &OnTextEdit::updateUi, [=](Scintilla::Update updated)
 				{
@@ -1636,11 +1637,11 @@ bool OnCore::OpenFile(const QString& file_path)
 					OnTextEdit* editor = qobject_cast<OnTextEdit*>(sender());
 					if (Scintilla::FlagSet(updated, Scintilla::Update::Content))
 					{
-						m_messageBus->Publish("Update Document Size", text_widget);
+						m_messageBus->Publish(Message::UpdateDocumentSize, text_widget);
 					}
 					if (Scintilla::FlagSet(updated, Scintilla::Update::Content) || Scintilla::FlagSet(updated, Scintilla::Update::Selection))
 					{
-						m_messageBus->Publish("Update Selection Info", text_widget);
+						m_messageBus->Publish(Message::UpdateSelectionInfo, text_widget);
 					}
 				});
 			m_textWidget.append(text_widget);
@@ -1694,7 +1695,7 @@ bool OnCore::CloseFile(int index)
 	// 最近文件
 	if (!m_textWidget[index]->GetFilePath().isEmpty())
 	{
-		m_messageBus->Publish("Add Recent File", m_textWidget[index]->GetFilePath());
+		m_messageBus->Publish(Message::AddRecentFile, m_textWidget[index]->GetFilePath());
 	}
 	// 关闭
 	m_textWidget.removeAt(index);
@@ -1732,7 +1733,7 @@ bool OnCore::LoadSettings()
 			text_widget->setEOLMode(SC_EOL_CRLF);
 			connect(text_widget, &OnTextEdit::savePointChanged, [this]()
 				{
-					m_messageBus->Publish("Text Changed");
+					m_messageBus->Publish(Message::TextChanged);
 				});
 			connect(text_widget, &OnTextEdit::updateUi, [=](Scintilla::Update updated)
 				{
@@ -1742,12 +1743,12 @@ bool OnCore::LoadSettings()
 					OnTextEdit* editor = qobject_cast<OnTextEdit*>(sender());
 					if (Scintilla::FlagSet(updated, Scintilla::Update::Content))
 					{
-						m_messageBus->Publish("Update Document Size", text_widget);
+						m_messageBus->Publish(Message::UpdateDocumentSize, text_widget);
 					}
 
 					if (Scintilla::FlagSet(updated, Scintilla::Update::Content) || Scintilla::FlagSet(updated, Scintilla::Update::Selection))
 					{
-						m_messageBus->Publish("Update Selection Info", text_widget);
+						m_messageBus->Publish(Message::UpdateSelectionInfo, text_widget);
 					}
 				});
 			m_textWidget.append(text_widget);
