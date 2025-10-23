@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>qml;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>qrc;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts</Extensions>
+    </Filter>
+    <Filter Include="Ui">
+      <UniqueIdentifier>{27db1a03-4c15-4e91-963c-a2c2d06a268c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SingleApplication">
+      <UniqueIdentifier>{b27c2c85-f9cc-4ec5-b7ce-91f94d9fedce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tinyxml2">
+      <UniqueIdentifier>{441118e2-7cf8-4c4a-b6ec-9bd43c31d135}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="on_core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="message_bus.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="on_menu_bar.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_status_bar.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_tab_bar.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_tab_widget.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_text_edit.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_tool_bar.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="dir_workspace_dock.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="dir_workspace_tree_view.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_main_window.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="status_label.cpp">
+      <Filter>Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="on_application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="on_settings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleApplication\singleapplication.cpp">
+      <Filter>SingleApplication</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleApplication\singleapplication_p.cpp">
+      <Filter>SingleApplication</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2\tinyxml2.cpp">
+      <Filter>tinyxml2</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="on_settings.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="on_core.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="on_menu_bar.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="on_tab_bar.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="on_tab_widget.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="on_text_edit.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="dir_workspace_dock.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="dir_workspace_tree_view.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="on_main_window.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="status_label.h">
+      <Filter>Ui</Filter>
+    </QtMoc>
+    <QtMoc Include="on_application.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SingleApplication\singleapplication.h">
+      <Filter>SingleApplication</Filter>
+    </QtMoc>
+    <QtMoc Include="SingleApplication\singleapplication_p.h">
+      <Filter>SingleApplication</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="message_bus.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="on_status_bar.h">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="on_tool_bar.h">
+      <Filter>Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2\tinyxml2.h">
+      <Filter>tinyxml2</Filter>
+    </ClInclude>
+    <ClInclude Include="one_notepad_global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <QtRcc Include="..\..\Resources\one_notepad.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\Resources\one_notepad.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
